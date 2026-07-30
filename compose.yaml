@@ -1,0 +1,33 @@
+name: route-manager
+
+services:
+  route-manager:
+    build: .
+    image: local/route-manager:1.0
+    container_name: route-manager
+    restart: unless-stopped
+    environment:
+      TRAEFIK_DYNAMIC_PATH: /managed/dynamic.yml
+      BACKUP_DIR: /app/backups
+      APP_PASSWORD: ${APP_PASSWORD}
+      APP_SECRET: ${APP_SECRET}
+    volumes:
+      - /root/traefik/archive/traefik-dynamic.yaml:/managed/dynamic.yml
+      - ./backups:/app/backups
+    expose:
+      - "8080"
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: traefik_proxy
+      traefik.http.routers.route-manager.rule: Host(`routes.jail.sale`)
+      traefik.http.routers.route-manager.entrypoints: websecure
+      traefik.http.routers.route-manager.tls: "true"
+      traefik.http.routers.route-manager.tls.certresolver: letsencrypt
+      traefik.http.routers.route-manager.service: route-manager
+      traefik.http.services.route-manager.loadbalancer.server.port: "8080"
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external: true

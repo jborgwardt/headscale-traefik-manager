@@ -1,0 +1,6 @@
+.env
+PASSWORD.txt
+backups/
+__pycache__/
+*.pyc
+.venv/

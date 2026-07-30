@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Public Routes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0f12;
+      --surface: #141a1f;
+      --surface-2: #1b232b;
+      --border: #2a343e;
+      --fg: #e8eef3;
+      --muted: #8b9aab;
+      --primary: #3dd6c6;
+      --primary-fg: #042a26;
+      --danger: #ff6b6b;
+      --warn: #f0b429;
+      --radius: 12px;
+      --font: "IBM Plex Sans", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: var(--font); color: var(--fg); background: var(--bg);
+      line-height: 1.45;
+      background-image:
+        radial-gradient(900px 400px at 10% -10%, #1a2e2c 0%, transparent 55%),
+        radial-gradient(700px 300px at 100% 0%, #1a2430 0%, transparent 50%);
+    }
+    button, [role="button"] { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: 0.55; }
+    a { color: var(--primary); }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    h1 { font-size: 1.35rem; margin: 0; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 0.92rem; margin: 0.25rem 0 0; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem 1.1rem; margin-bottom: 1rem;
+    }
+    .btn {
+      border: 0; border-radius: 10px; padding: 0.65rem 1rem;
+      font: 600 0.95rem var(--font); transition: transform .12s ease, opacity .12s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--primary); color: #042a26; }
+    .btn-ghost { background: var(--surface-2); color: var(--fg); border: 1px solid var(--border); }
+    .btn-danger { background: #3a1a1a; color: var(--danger); border: 1px solid #5a2a2a; }
+    .btn-sm { padding: 0.4rem 0.7rem; font-size: 0.85rem; }
+    label { display: block; font-size: 0.82rem; color: var(--muted); margin: 0.65rem 0 0.3rem; }
+    input[type=text], input[type=password], input[type=url] {
+      width: 100%; background: var(--bg); color: var(--fg);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.7rem 0.85rem; font: 0.95rem var(--mono);
+    }
+    input:focus { outline: 2px solid color-mix(in srgb, var(--primary) 55%, transparent); border-color: var(--primary); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+    .checks { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.75rem; color: var(--muted); font-size: 0.9rem; }
+    .checks label { display: flex; align-items: center; gap: 0.4rem; margin: 0; color: var(--fg); font-size: 0.9rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.7rem 0.4rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    .host { font-family: var(--mono); font-weight: 500; }
+    .backend { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); word-break: break-all; }
+    .actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .badge {
+      display: inline-block; font-size: 0.72rem; padding: 0.15rem 0.45rem;
+      border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--border);
+    }
+    .badge-sys { color: var(--warn); border-color: #5a4a20; background: #2a2410; }
+    .err { background: #2a1515; color: #ffb4b4; border: 1px solid #5a2a2a; padding: 0.7rem 0.9rem; border-radius: 10px; margin-bottom: 1rem; }
+    .ok { background: #12281f; color: #9de0c8; border: 1px solid #1f4a3a; padding: 0.7rem 0.9rem; border-radius: 10px; margin-bottom: 1rem; }
+    .hidden { display: none !important; }
+    .login-box { max-width: 380px; margin: 12vh auto 0; }
+    .toolbar { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .empty { color: var(--muted); padding: 1.5rem 0; text-align: center; }
+    footer { margin-top: 2rem; color: var(--muted); font-size: 0.82rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="loginView" class="login-box hidden">
+      <header>
+        <div>
+          <h1>Public Routes</h1>
+          <p class="sub">Sign in to manage Traefik HTTPS routes</p>
+        </div>
+      </header>
+      <div class="card">
+        <div id="loginErr" class="err hidden">Wrong password</div>
+        <form method="post" action="/login">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+          <div style="margin-top:1rem">
+            <button class="btn btn-primary" type="submit" style="width:100%">Sign in</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="appView" class="hidden">
+      <header>
+        <div>
+          <h1>Public Routes</h1>
+          <p class="sub">Add a public hostname → tailnet or local backend. TLS via Let’s Encrypt.</p>
+        </div>
+        <form method="post" action="/logout"><button class="btn btn-ghost btn-sm" type="submit">Sign out</button></form>
+      </header>
+
+      <div id="flash" class="hidden"></div>
+
+      <div class="card">
+        <div class="toolbar">
+          <strong id="formTitle">Add route</strong>
+          <span class="badge" id="editBadge" class="hidden"></span>
+        </div>
+        <form id="routeForm">
+          <input type="hidden" id="routeId" />
+          <div class="row">
+            <div>
+              <label for="host">Public hostname</label>
+              <input id="host" type="text" placeholder="claw.jail.sale" required autocomplete="off" />
+            </div>
+            <div>
+              <label for="backend">Backend URL</label>
+              <input id="backend" type="text" placeholder="http://100.64.0.12:18789" required autocomplete="off" />
+            </div>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox" id="hsts" checked /> HSTS</label>
+            <label><input type="checkbox" id="hstsSub" /> HSTS include subdomains</label>
+          </div>
+          <div class="toolbar" style="margin-top:1rem;margin-bottom:0">
+            <button class="btn btn-primary" type="submit" id="saveBtn">Save route</button>
+            <button class="btn btn-ghost" type="button" id="cancelBtn" class="hidden">Cancel edit</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <strong>Active routes</strong>
+          <button class="btn btn-ghost btn-sm" type="button" id="refreshBtn">Refresh</button>
+        </div>
+        <div id="tableWrap"></div>
+      </div>
+
+      <footer>
+        Writes <code>traefik-dynamic.yaml</code> · auto-backup · Traefik reloads on save.
+        DNS A/CNAME for the hostname still needs to point at this VPS.
+      </footer>
+    </div>
+  </div>
+  <script>
+    const AUTHED = __AUTHED__;
+    const $ = (id) => document.getElementById(id);
+    const loginView = $("loginView");
+    const appView = $("appView");
+    if (AUTHED) appView.classList.remove("hidden");
+    else loginView.classList.remove("hidden");
+    if (new URLSearchParams(location.search).get("e") === "1") {
+      $("loginErr")?.classList.remove("hidden");
+    }
+
+    let editing = null;
+
+    function flash(msg, ok=true) {
+      const el = $("flash");
+      el.className = ok ? "ok" : "err";
+      el.textContent = msg;
+      el.classList.remove("hidden");
+      setTimeout(() => el.classList.add("hidden"), 3500);
+    }
+
+    async function api(path, opts={}) {
+      const res = await fetch(path, {
+        headers: { "Content-Type": "application/json", ...(opts.headers||{}) },
+        credentials: "same-origin",
+        ...opts,
+      });
+      if (res.status === 401) { location.href = "/"; return null; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.detail || data.message || res.statusText);
+      return data;
+    }
+
+    function resetForm() {
+      editing = null;
+      $("routeId").value = "";
+      $("host").value = "";
+      $("backend").value = "";
+      $("hsts").checked = true;
+      $("hstsSub").checked = false;
+      $("formTitle").textContent = "Add route";
+      $("saveBtn").textContent = "Save route";
+      $("cancelBtn").classList.add("hidden");
+    }
+
+    function render(routes) {
+      if (!routes.length) {
+        $("tableWrap").innerHTML = '<div class="empty">No Host routes yet. Add one above.</div>';
+        return;
+      }
+      const rows = routes.map(r => {
+        const actions = r.system ? '<span class="badge badge-sys">protected</span>' : `
+          <div class="actions">
+            <button class="btn btn-ghost btn-sm" data-edit="${r.id}">Edit</button>
+            <button class="btn btn-danger btn-sm" data-del="${r.id}">Delete</button>
+            ${r.public_url ? `<a class="btn btn-ghost btn-sm" href="${r.public_url}" target="_blank" rel="noopener">Open</a>` : ""}
+          </div>`;
+        return `<tr>
+          <td><div class="host">${escapeHtml(r.host)}</div>
+              <div class="badge">${escapeHtml(r.id)}</div></td>
+          <td class="backend">${escapeHtml(r.backend || "—")}</td>
+          <td>${actions}</td>
+        </tr>`;
+      }).join("");
+      $("tableWrap").innerHTML = `<table>
+        <thead><tr><th>Hostname</th><th>Backend</th><th></th></tr></thead>
+        <tbody>${rows}</tbody></table>`;
+      $("tableWrap").querySelectorAll("[data-edit]").forEach(btn => {
+        btn.onclick = () => {
+          const r = routes.find(x => x.id === btn.dataset.edit);
+          if (!r) return;
+          editing = r.id;
+          $("routeId").value = r.id;
+          $("host").value = r.host;
+          $("backend").value = r.backend;
+          $("hsts").checked = (r.middlewares||[]).some(m => String(m).includes("hsts"));
+          $("hstsSub").checked = (r.middlewares||[]).some(m => String(m).includes("include"));
+          $("formTitle").textContent = "Edit route";
+          $("saveBtn").textContent = "Update route";
+          $("cancelBtn").classList.remove("hidden");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+      });
+      $("tableWrap").querySelectorAll("[data-del]").forEach(btn => {
+        btn.onclick = async () => {
+          if (!confirm("Delete route " + btn.dataset.del + "?")) return;
+          try {
+            await api("/api/routes/" + encodeURIComponent(btn.dataset.del), { method: "DELETE" });
+            flash("Deleted");
+            load();
+          } catch (e) { flash(e.message, false); }
+        };
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({"&":"&","<":"<",">":">","\"":""","'":"&#39;"}[c]));
+    }
+
+    async function load() {
+      if (!AUTHED) return;
+      try {
+        const data = await api("/api/routes");
+        render(data.routes || []);
+      } catch (e) { flash(e.message, false); }
+    }
+
+    $("routeForm").onsubmit = async (ev) => {
+      ev.preventDefault();
+      const body = {
+        host: $("host").value.trim(),
+        backend: $("backend").value.trim(),
+        id: $("routeId").value || undefined,
+        hsts: $("hsts").checked,
+        hsts_subdomains: $("hstsSub").checked,
+      };
+      try {
+        if (editing) {
+          await api("/api/routes/" + encodeURIComponent(editing), { method: "PUT", body: JSON.stringify(body) });
+          flash("Updated");
+        } else {
+          await api("/api/routes", { method: "POST", body: JSON.stringify(body) });
+          flash("Created — point DNS A/CNAME at this VPS if needed");
+        }
+        resetForm();
+        load();
+      } catch (e) { flash(e.message, false); }
+    };
+    $("cancelBtn").onclick = resetForm;
+    $("refreshBtn").onclick = load;
+    load();
+  </script>
+</body>
+</html>
